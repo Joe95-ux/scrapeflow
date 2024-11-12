@@ -14,7 +14,7 @@ function Logo({
     <Link
       href="/"
       className={cn(
-        "text-2xl font-extrabold flex items-center gap-2",
+        "text-xl font-extrabold flex items-center gap-2",
         fontSize
       )}
     >

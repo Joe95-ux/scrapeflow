@@ -5,6 +5,7 @@ import {
   CoinsIcon,
   HomeIcon,
   Layers2Icon,
+  MenuIcon,
   ShieldCheckIcon,
 } from "lucide-react";
 import Logo from "@/components/Logo";
@@ -49,7 +50,7 @@ const DesktopSidebar = () => {
      max-w-[280px] h-screen overflow-hidden w-full bg-primary/5 dark:bg-secondary/30 
      dark:text-foreground text-muted-foreground border-r-2 border-separate"
     >
-      <div className="flex items-center justify-center gap-2 border-b-[1px] border-separate p-4">
+      <div className="flex items-center justify-center gap-2 border-b-[1px] h-[60px] border-separate p-4">
         <Logo />
       </div>
       <div className="p-2">TODO CREDITS</div>
@@ -89,15 +90,16 @@ export function MobileSidebar() {
       <nav className="container flex items-center justify-between px-8">
         <Sheet open={isOpen} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant={"ghost"} size={"icon"}></Button>
+            <Button variant={"ghost"} size={"icon"}>
+              <MenuIcon/>
+            </Button>
           </SheetTrigger>
           <SheetContent
-            className="w-[400px] sm-w-[540px] space-y-4"
+            className="w-[400px] sm:w-[540px] space-y-4"
             side={"left"}
           >
             <Logo />
             <div className="flex flex-col gap-1">
-              {" "}
               {routes.map((route, index) => (
                 <Link
                   key={index}
@@ -108,6 +110,7 @@ export function MobileSidebar() {
                         ? "sidebarActiveItem"
                         : "sidebarItem",
                   })}
+                  onClick={() => setOpen((prev) => !prev)}
                 >
                   <route.icon size={20} />
                   {route.label}
