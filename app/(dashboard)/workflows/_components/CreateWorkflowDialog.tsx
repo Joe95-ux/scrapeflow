@@ -17,14 +17,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createWorkflowSchema } from "@/shema/workflow";
+import { createWorkflowSchema, createWorkflowSchemaType} from "@/shema/workflow";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm<z.infer<typeof createWorkflowSchema>>({
+  const form = useForm<createWorkflowSchemaType>({
     resolver: zodResolver(createWorkflowSchema),
     defaultValues: {},
   });
