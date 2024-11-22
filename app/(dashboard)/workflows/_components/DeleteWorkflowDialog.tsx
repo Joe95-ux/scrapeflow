@@ -44,23 +44,20 @@ const DeleteWorkflowDialog = ({ open, setOpen, workflowName }: Props) => {
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your
-            workflow.
-            <p>
-              If you are sure, enter <br>{workflowName}</br> to confirm:
-            </p>
+            workflow. If you are sure, enter <strong>{workflowName}</strong> to confirm:
             <Input
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
+              className="mt-2"
             />
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={()=>setConfirmText("")}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             disabled={confirmText !== workflowName || deleteMutation.isPending}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            onClick={(e)=>{
-              e.stopPropagation();
+            onClick={()=>{
               toast.loading("Deleting workflow...", {id: workflowName});
               deleteMutation.mutate(workflowName)
             }}
