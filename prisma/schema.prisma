@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Workflow {
-  id          String @default(cuid())
+  id          String @id @default(cuid())
   userId      String
   name        String
   description String?
