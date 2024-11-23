@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import React from 'react'
+import Editor from '../../_components/Editor';
 
 async function Page({params}: {params: {workflowId: string}}){
   const {workflowId} = params;
@@ -14,8 +15,12 @@ async function Page({params}: {params: {workflowId: string}}){
     }
   });
 
+  if(!workflow){
+    return <div>workflow not found</div>
+  }
+
   return (
-    <div>page</div>
+    <Editor workflow={workflow}/>
   )
 }
 
