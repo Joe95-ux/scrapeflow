@@ -10,7 +10,7 @@ import NodeComponet from "../nodes/NodeComponent";
 
 //tell floweditor what node component to use
 const nodeTypes = {
-    Node: NodeComponet,
+    FlowScrapeNode: NodeComponet,
 }
 
 function FlowEditor({ workflow }: { workflow: Workflow }) {
@@ -23,6 +23,7 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
       >
 
         <Controls position="top-left"/>
