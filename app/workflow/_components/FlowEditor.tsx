@@ -10,8 +10,11 @@ import NodeComponet from "../nodes/NodeComponent";
 
 //tell floweditor what node component to use
 const nodeTypes = {
-    FlowScrapeNode: NodeComponet,
+  FlowScrapeNode: NodeComponet,
 }
+
+const snapGrid: [number, number] = [50, 50];
+const fitViewOptions = {padding: 1};
 
 function FlowEditor({ workflow }: { workflow: Workflow }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([CreateFlowNode(TaskType.LAUNCH_BROWSER)]);
@@ -24,9 +27,13 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
+        snapToGrid
+        snapGrid={snapGrid}
+        fitViewOptions={fitViewOptions}
+        fitView
       >
 
-        <Controls position="top-left"/>
+        <Controls position="top-left" fitViewOptions={fitViewOptions}/>
         <Background variant={BackgroundVariant.Dots}  gap={12} size={1}/>
       </ReactFlow>
     </main>
