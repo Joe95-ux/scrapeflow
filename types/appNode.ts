@@ -13,4 +13,7 @@ export interface AppNode extends Node {
 
 export interface ParamProps {
   param: TaskParam;
+  value: string;
+  updateNodeParamValue: (newValue: string) => void;
+
 }

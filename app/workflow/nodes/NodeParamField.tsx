@@ -23,7 +23,7 @@ function NodeParamField({ param, nodeId }: { param: TaskParam, nodeId: string })
 
   switch (param.type) {
     case TaskParamType.STRING:
-      return <StringParam param={param} />;
+      return <StringParam param={param} value={value} updateNodeParamValue={updateNodeParamValue}/>;
     default:
       return (
         <div className="w-full">
