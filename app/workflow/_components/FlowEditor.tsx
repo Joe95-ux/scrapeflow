@@ -123,7 +123,7 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
         return false;
       }
 
-      // prevent looping
+      // prevent cycles in workflow
       const hasCycle = (node: AppNode, visited = new Set()) => {
         if (visited.has(node.id)) return false;
         visited.add(node.id);
