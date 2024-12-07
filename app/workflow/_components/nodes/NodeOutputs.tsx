@@ -6,7 +6,7 @@ import { ColorHandle } from "./Common";
 import NodeParamField from "./NodeParamField";
 
 export function NodeOutputs({ children }: { children: ReactNode }) {
-  return <div className="flex flex-col gap-1">{children}</div>;
+  return <div className="flex flex-col gap-2">{children}</div>;
 }
 
 export function NodeOutput({ output}: { output: TaskParam}) {
