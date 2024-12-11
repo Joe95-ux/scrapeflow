@@ -25,7 +25,7 @@ function StringParam({ param, value, disabled, updateNodeParamValue }: ParamProp
         {param.required && <p className="text-red-400">*</p>}
       </Label>
       <Component
-        className="text-xs"
+        className="text-xs dark:bg-gray-900"
         id={id}
         disabled={disabled}
         value={internalValue}

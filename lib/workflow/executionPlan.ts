@@ -89,8 +89,15 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
         // is an output linked to it then we need
         // to be sure that the output is already planned
         if(!inputLinkedToOutput) continue;
+        if(inputLinkedToOutput && planned.has(inputLinkedToOutput.source)){
+            // The output is providing a value to
+            // the input. the input is valid
+            continue;
+        }
 
     }
+    invalidInputs.push(input.name);
 
   }
+  return invalidInputs;
 }
