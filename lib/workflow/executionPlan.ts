@@ -6,17 +6,17 @@ import {
 import { Edge, getIncomers } from "@xyflow/react";
 import { TaskRegistry } from "./task/Registry";
 
-export enum FlowToExecutionPlanValidationError{
+export enum FlowToExecutionPlanValidationError {
   "NO_ENTRY_POINT",
-  "INVALID_INPUTS"
+  "INVALID_INPUTS",
 }
 
 type FlowToExecutionPlanType = {
   executionPlan?: WorkflowExecutionPlan;
-  error?:{
+  error?: {
     type: FlowToExecutionPlanValidationError;
-    invalidElements?: AppNodeMissingInputs;
-  }
+    invalidElements?: AppNodeMissingInputs[];
+  };
 };
 
 export function FlowToExecutionPlan(
@@ -28,10 +28,23 @@ export function FlowToExecutionPlan(
   );
 
   if (!entryPoint) {
-    throw new Error("TODO: Handle this error");
+    return {
+      error: {
+        type: FlowToExecutionPlanValidationError.NO_ENTRY_POINT,
+      },
+    };
   }
 
+  const inputsWithErrors: AppNodeMissingInputs[] = [];
   const planned = new Set<string>();
+  const invalidInputs = getInvalidInputs(entryPoint, edges, planned);
+  if(invalidInputs.length > 0){
+    inputsWithErrors.push({
+      nodeId: entryPoint.id,
+      inputs: invalidInputs,
+    })
+  }
+
   const executionPlan: WorkflowExecutionPlan = [
     {
       phase: 1,
@@ -59,7 +72,10 @@ export function FlowToExecutionPlan(
           // this means that this particular node has an invalid input
           // which means that the workflow is invalid
           console.error("invalid inputs", currentNode.id, invalidInputs);
-          throw new Error("TODO: HANDLE ERROR 1");
+          inputsWithErrors.push({
+            nodeId: currentNode.id,
+            inputs: invalidInputs,
+          });
         } else {
           // let's skip this node for now
           continue;
@@ -67,11 +83,20 @@ export function FlowToExecutionPlan(
       }
       nextPhase.nodes.push(currentNode);
     }
-    for(const node of nextPhase.nodes){
+    for (const node of nextPhase.nodes) {
       planned.add(node.id);
     }
     executionPlan.push(nextPhase);
   }
+  if(inputsWithErrors.length > 0){
+    return{
+      error:{
+        type:FlowToExecutionPlanValidationError.INVALID_INPUTS,
+        invalidElements: inputsWithErrors,
+      }
+    }
+  }
+
   return { executionPlan };
 }
 
@@ -88,29 +113,32 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
     }
 
     // if a value is not provided by the user then we need to check if there is an output linked to the current input
-    const incomingEdges = edges.filter((edge)=> edge.target === node.id);
+    const incomingEdges = edges.filter((edge) => edge.target === node.id);
 
-    const inputLinkedToOutput = incomingEdges.find((edge)=>edge.targetHandle === input.name);
+    const inputLinkedToOutput = incomingEdges.find(
+      (edge) => edge.targetHandle === input.name
+    );
 
-    const requiredInputProvidedByVisitedOutput = input.required && inputLinkedToOutput && planned.has(inputLinkedToOutput.source);
+    const requiredInputProvidedByVisitedOutput =
+      input.required &&
+      inputLinkedToOutput &&
+      planned.has(inputLinkedToOutput.source);
 
-    if(requiredInputProvidedByVisitedOutput){
-        // the input is required and we have a      valid value for it provided by a task that isalready planned
+    if (requiredInputProvidedByVisitedOutput) {
+      // the input is required and we have a      valid value for it provided by a task that isalready planned
+      continue;
+    } else if (!input.required) {
+      // if the input is not required but there
+      // is an output linked to it then we need
+      // to be sure that the output is already planned
+      if (!inputLinkedToOutput) continue;
+      if (inputLinkedToOutput && planned.has(inputLinkedToOutput.source)) {
+        // The output is providing a value to
+        // the input. the input is valid
         continue;
-    }else if(!input.required){
-        // if the input is not required but there
-        // is an output linked to it then we need
-        // to be sure that the output is already planned
-        if(!inputLinkedToOutput) continue;
-        if(inputLinkedToOutput && planned.has(inputLinkedToOutput.source)){
-            // The output is providing a value to
-            // the input. the input is valid
-            continue;
-        }
-
+      }
     }
     invalidInputs.push(input.name);
-
   }
   return invalidInputs;
 }
