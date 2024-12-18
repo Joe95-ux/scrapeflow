@@ -4,6 +4,7 @@ import { GetWorkflowExecutionWithPhases } from "@/actions/workflows/getWorkflowE
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { DatesToDurationString } from "@/lib/helper/dates";
 import { WorkflowExecutionStatus } from "@/types/workflow";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
@@ -12,6 +13,7 @@ import {
   CircleDashedIcon,
   ClockIcon,
   CoinsIcon,
+  Loader2Icon,
   LucideIcon,
   WorkflowIcon,
 } from "lucide-react";
@@ -28,6 +30,10 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
+  const duration = DatesToDurationString(
+    query.data?.completedAt,
+    query.data?.startedAt
+  );
   return (
     <div className="flex h-full w-full">
       <aside className="w-[350px] max-w-[350px] min-w-[350px] border-r-2 border-separate flex flex-grow flex-col overflow-hidden">
@@ -50,7 +56,17 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
               </span>
             }
           />
-          <ExecutionLabel icon={ClockIcon} label="Duration" value={"TODO"} />
+          <ExecutionLabel
+            icon={ClockIcon}
+            label="Duration"
+            value={
+              duration ? (
+                duration
+              ) : (
+                <Loader2Icon className="animate-spin" size={18} />
+              )
+            }
+          />
           <ExecutionLabel
             icon={CoinsIcon}
             label="Credits consumed"
@@ -65,9 +81,13 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
           </div>
         </div>
         <Separator />
-        <div className="overflow-auto h-full px-2 py-4 gap-1">
+        <div className="overflow-auto h-full px-2 py-4 gap-2">
           {query.data?.phases.map((phase, index) => (
-            <Button key={phase.id} className="w-full justify-between" variant={"ghost"}>
+            <Button
+              key={phase.id}
+              className="w-full justify-between"
+              variant={"ghost"}
+            >
               <div className="flex items-center gap-2">
                 <Badge variant={"outline"}>{index + 1}</Badge>
                 <p className="font-semibold">{phase.name}</p>
