@@ -93,11 +93,11 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
           </div>
         </div>
         <Separator />
-        <div className="overflow-auto h-full px-2 py-4 gap-2">
+        <div className="overflow-auto h-full px-2 py-4">
           {query.data?.phases.map((phase, index) => (
             <Button
               key={phase.id}
-              className="w-full justify-between"
+              className="w-full justify-between mb-2"
               variant={selectedPhase === phase.id ? "secondary" : "ghost"}
               onClick={() => {
                 if (isRunning)
@@ -114,6 +114,9 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
           ))}
         </div>
       </aside>
+      <div className="flex w-full h-full">
+        <pre>{JSON.stringify(phaseDetails.data, null, 4)}</pre>
+      </div>
     </div>
   );
 }
