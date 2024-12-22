@@ -73,8 +73,8 @@ export async function RunWorkflow(form: {
       },
     },
     select:{
-        id: true,
-        phases: true,
+      id: true,
+      phases: true,
     },
 
   });
