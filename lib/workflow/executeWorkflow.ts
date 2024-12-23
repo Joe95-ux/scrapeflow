@@ -120,9 +120,9 @@ async function executeWorkflowPhase(phase: ExecutionPhase){
 
     // TODO: decrement user balance (with required credits)
 
-    // Execute phase silmulation
-    await waitFor(2000);
-    const success = Math.random() < 0.7;
+    // Execute phase
+    const success = executePhase(phase, node);
+    
 
     await finalizePhase(phase.id, success);
     return {success};
@@ -139,4 +139,13 @@ async function finalizePhase(phaseId: string, success: boolean){
             completedAt: new Date(),
         }
     })
+}
+
+async function executePhase(phase: ExecutionPhase, node: AppNode): Promise<boolean>{
+    const runFn = ExecutorRegistry[node.data.type];
+    if(!runFn){
+        return false;
+    }
+    return await runFn();
+
 }
