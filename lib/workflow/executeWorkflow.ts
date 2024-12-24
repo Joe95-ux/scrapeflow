@@ -6,6 +6,7 @@ import { waitFor } from "../helper/waitFor";
 import { ExecutionPhase } from "@prisma/client";
 import { AppNode } from "@/types/appNode";
 import { TaskRegistry } from "./task/Registry";
+import { ExecutorRegistry } from "./executor/registry";
 
 export async function ExecuteWorkflow(executionId: string){
     const execution = await prisma.workflowExecution.findUnique({
