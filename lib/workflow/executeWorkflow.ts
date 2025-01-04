@@ -122,14 +122,14 @@ async function executeWorkflowPhase(phase: ExecutionPhase){
     // TODO: decrement user balance (with required credits)
 
     // Execute phase
-    const success = executePhase(phase, node);
+    const success = await executePhase(phase, node);
     
 
     await finalizePhase(phase.id, success);
     return {success};
 
 }
-
+ 
 async function finalizePhase(phaseId: string, success: boolean){
     const finalStatus = success ? ExecutionPhaseStatus.COMPLETED : ExecutionPhaseStatus.FAILED;
 
