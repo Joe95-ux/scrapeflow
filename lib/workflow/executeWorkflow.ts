@@ -7,6 +7,9 @@ import { ExecutionPhase } from "@prisma/client";
 import { AppNode } from "@/types/appNode";
 import { TaskRegistry } from "./task/Registry";
 import { ExecutorRegistry } from "./executor/registry";
+import { Environment } from "@/types/executor";
+import { Browser } from "puppeteer";
+import { getEnvironmentData } from "worker_threads";
 
 export async function ExecuteWorkflow(executionId: string){
     const execution = await prisma.workflowExecution.findUnique({
@@ -20,7 +23,7 @@ export async function ExecuteWorkflow(executionId: string){
     }
 
     // setup execution environment
-    const environment = {phases:{}}
+    const environment: Environment = {phases:{}}
 
     // initialise workflow execution
 
@@ -32,7 +35,7 @@ export async function ExecuteWorkflow(executionId: string){
     for(const phase of execution.phases){
         // TODO: consume credits
         // execute phase
-        const phaseExecution = await executeWorkflowPhase(phase);
+        const phaseExecution = await executeWorkflowPhase(phase, environment);
         if(!phaseExecution.success){
             executionFailed = true;
             break;
@@ -104,7 +107,7 @@ async function finalizeWorkflowExecution(executionId: string, workflowId: string
    ]);
 }
 
-async function executeWorkflowPhase(phase: ExecutionPhase){
+async function executeWorkflowPhase(phase: ExecutionPhase, environment: Environment){
     const startedAt = new Date();
     const node = JSON.parse(phase.node) as AppNode;
 
@@ -122,7 +125,7 @@ async function executeWorkflowPhase(phase: ExecutionPhase){
     // TODO: decrement user balance (with required credits)
 
     // Execute phase
-    const success = await executePhase(phase, node);
+    const success = await executePhase(phase, node, environment);
     
 
     await finalizePhase(phase.id, success);
@@ -142,11 +145,11 @@ async function finalizePhase(phaseId: string, success: boolean){
     })
 }
 
-async function executePhase(phase: ExecutionPhase, node: AppNode): Promise<boolean>{
+async function executePhase(phase: ExecutionPhase, node: AppNode, environment: Environment): Promise<boolean>{
     const runFn = ExecutorRegistry[node.data.type];
     if(!runFn){
         return false;
     }
-    return await runFn();
+    return await runFn(environment);
 
 }
