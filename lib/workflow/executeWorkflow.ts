@@ -8,8 +8,6 @@ import { AppNode } from "@/types/appNode";
 import { TaskRegistry } from "./task/Registry";
 import { ExecutorRegistry } from "./executor/registry";
 import { Environment } from "@/types/executor";
-import { Browser } from "puppeteer";
-import { getEnvironmentData } from "worker_threads";
 
 export async function ExecuteWorkflow(executionId: string){
     const execution = await prisma.workflowExecution.findUnique({
@@ -110,6 +108,7 @@ async function finalizeWorkflowExecution(executionId: string, workflowId: string
 async function executeWorkflowPhase(phase: ExecutionPhase, environment: Environment){
     const startedAt = new Date();
     const node = JSON.parse(phase.node) as AppNode;
+    setupEnvironmentForPhase(node, environment);
 
     // update phase status
     await prisma.executionPhase.update({
@@ -150,6 +149,19 @@ async function executePhase(phase: ExecutionPhase, node: AppNode, environment: E
     if(!runFn){
         return false;
     }
-    return await runFn(environment);
+    return await runFn(environment.phases[node.id]);
+
+}
+
+function setupEnvironmentForPhase(node: AppNode, environment: Environment){
+    environment.phases[node.id] = {inputs:{}, outputs:{}};
+    const inputs = TaskRegistry[node.data.type].inputs;
+    for(const input of inputs){
+        const inputValue = node.data.inputs[input.name];
+        if(inputValue){
+            environment.phases[node.id].inputs[input.name] = inputValue;
+            continue;
+        }
+    }
 
 }
