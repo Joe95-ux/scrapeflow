@@ -12,6 +12,7 @@ export async function LaunchBrowserExecutor(environment:ExecutionEnvironment<typ
     environment.setBrowser(browser);
     const page = await browser.newPage();
     await page.goto(websiteUrl);
+    environment.setPage(page);
     return true;
    } catch (error) {
     console.log(error);
