@@ -3,6 +3,7 @@ import { WorkflowTask } from "./workflow";
 
 export type Environment = {
     browser?: Browser,
+    page?: Page,
     // phases with nodeId as key
     phases: {
         [key: string]: {

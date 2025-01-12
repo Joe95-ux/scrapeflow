@@ -8,7 +8,7 @@ import { AppNode } from "@/types/appNode";
 import { TaskRegistry } from "./task/Registry";
 import { ExecutorRegistry } from "./executor/registry";
 import { Environment, ExecutionEnvironment } from "@/types/executor";
-import { Browser } from "puppeteer";
+import { Browser, Page } from "puppeteer";
 
 export async function ExecuteWorkflow(executionId: string){
     const execution = await prisma.workflowExecution.findUnique({
@@ -45,7 +45,8 @@ export async function ExecuteWorkflow(executionId: string){
 
     await finalizeWorkflowExecution(executionId, execution.workflowId, executionFailed, creditsConsumed);
 
-    // TODO: clean up environment
+    // clean up environment
+    await cleanupEnvironment(environment);
 
     revalidatePath("/workflows/runs");
 }
@@ -173,8 +174,17 @@ function setupEnvironmentForPhase(node: AppNode, environment: Environment){
  function createExecutionEnvironment(node: AppNode, environment: Environment): ExecutionEnvironment<any>{
     return{
         getInput: (name: string)=> environment.phases[node.id]?.inputs[name],
-        getBrowser: ( )=> environment.browser,
+        getBrowser: () => environment.browser,
         setBrowser : (browser: Browser) => (environment.browser = browser),
+        getPage:()=>environment.page,
+        setPage: (page: Page)=>(environment.page = page)
+    }
+
+ }
+
+ async function cleanupEnvironment(environment: Environment){
+    if(environment.browser){
+        await environment.browser.close().catch((err)=> console.error("cannot close browser, reason:", err));
     }
 
  }
