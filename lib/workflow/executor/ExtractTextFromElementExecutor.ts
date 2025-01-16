@@ -5,10 +5,12 @@ export async function ExtractTextFromElementExecutor(environment:ExecutionEnviro
    try {
     const selector = environment.getInput("Selector");
     if(!selector){
+      console.error("Selector not definedS");
       return false;
     }
     const html = environment.getInput("Html");
     if(!html){
+      console.error("Html not defined");
       return false;
     }
     const $ = cheerio.load(html);
