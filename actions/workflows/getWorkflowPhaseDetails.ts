@@ -13,6 +13,13 @@ export async function GetWorkflowPhaseDetails(phaseId: string){
         where:{
             id: phaseId,
             execution:{userId},
+        },
+        include:{
+            logs:{
+                orderBy:{
+                    timestamp: "asc"
+                }
+            }
         }
     })
 }
