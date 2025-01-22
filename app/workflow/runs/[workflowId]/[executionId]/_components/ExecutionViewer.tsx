@@ -20,6 +20,7 @@ import {
   WorkflowIcon,
 } from "lucide-react";
 import { ReactNode, useState } from "react";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkflowExecutionWithPhases>>;
 
@@ -153,6 +154,11 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                 </span>
               </Badge>
             </div>
+            <ParameterViewer
+            title="Inputs"
+            subtitle="Inputs used for this phase"
+            paramsJson={phaseDetails.data.inputs}
+            />
           </div>
         )}
       </div>
@@ -183,4 +189,18 @@ function ExecutionLabel({
       </div>
     </div>
   );
+}
+
+function ParameterViewer({title, subtitle, paramsJson}: {
+  title: string,
+  subtitle: string,
+  paramsJson: string | null
+}){
+  const params = paramsJson ? JSON.parse(paramsJson) : undefined;
+  return (
+    <div>
+      
+    </div>
+  )
+
 }
