@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { DatesToDurationString } from "@/lib/helper/dates";
 import { GetPhasesTotalCost } from "@/lib/helper/phases";
-import { WorkflowExecutionStatus } from "@/types/workflow";
+import { ExecutionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -19,7 +19,7 @@ import {
   LucideIcon,
   WorkflowIcon,
 } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -39,6 +39,7 @@ import { Input } from "@/components/ui/input";
 import { ExecutionLog } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { LogLevel } from "@/types/log";
+import PhaseStatusBadge from "./PhaseStatusBadge";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkflowExecutionWithPhases>>;
 
@@ -64,6 +65,22 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
   });
 
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
+
+  useEffect(()=>{
+    // while running, we auto-select the current running phase in the sidebar
+    const phases = query.data?.phases || [];
+    if(isRunning){
+      // select the last executed phase
+      const phaseToSelect = phases.toSorted((a,b)=> a.startedAt! > b.startedAt! ? -1 : 1)[0];
+
+      setSelectedPhase(phaseToSelect.id);
+      return;
+    }
+    const phaseToSelect = phases.toSorted((a,b)=> a.completedAt! > b.completedAt! ? -1 : 1)[0];
+
+    setSelectedPhase(phaseToSelect.id);
+  }, [isRunning, query.data?.phases]);
+
   const creditsConsumed = GetPhasesTotalCost(query.data?.phases || []);
   return (
     <div className="flex h-full w-full">
@@ -127,7 +144,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                 <Badge variant={"outline"}>{index + 1}</Badge>
                 <p className="font-semibold">{phase.name}</p>
               </div>
-              <p className="text-xs text-muted-foreground">{phase.status}</p>
+              <PhaseStatusBadge status={phase.status as ExecutionPhaseStatus}/>
             </Button>
           ))}
         </div>
@@ -285,14 +302,14 @@ function LogViewer({ logs }: { logs: ExecutionLog[] | undefined }) {
               <TableRow key={log.id} className="text-muted-foreground">
                 <TableCell
                   width={190}
-                  className="text-xs text-muted-foreground p-[2px] pl-4"
+                  className="text-xs text-muted-foreground p-[2px] pl-2"
                 >
                   {log.timestamp.toISOString()}
                 </TableCell>
                 <TableCell
                   width={80}
                   className={cn(
-                    "uppercase text-xs font-bold p-[3px] pl-4",
+                    "uppercase text-xs font-bold p-[3px] pl-2",
                     (log.logLevel as LogLevel) === "error" &&
                       "text-destructive",
                     (log.logLevel as LogLevel) === "info" && "text-primary"
@@ -300,7 +317,7 @@ function LogViewer({ logs }: { logs: ExecutionLog[] | undefined }) {
                 >
                   {log.logLevel}
                 </TableCell>
-                <TableCell className="text-sm flex-1 p-[3px] pl-4">{log.message}</TableCell>
+                <TableCell className="text-sm flex-1 p-[3px] pl-2">{log.message}</TableCell>
               </TableRow>
             ))}
           </TableBody>
