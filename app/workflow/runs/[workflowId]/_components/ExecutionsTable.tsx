@@ -38,7 +38,7 @@ function ExecutionsTable({
   });
   
   return (
-    <div className="border rounded-lg shadow-md overflow-auto m-8">
+    <div className="border rounded-lg shadow-md overflow-auto">
       <Table>
         <TableHeader className="bg-muted">
           <TableRow>

@@ -2,17 +2,20 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function NavigationTabs({ workflowId }: { workflowId: string }) {
+  const pathname = usePathname();
+  const activeTab = pathname?.split("/")[2];
   return (
-    <Tabs defaultValue="editor" className="w-[400px]">
+    <Tabs value={activeTab} className="w-[400px]">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="editor">
-          <Link href={`/workflow/editor/${workflowId}`}>Editor</Link>
-        </TabsTrigger>
-        <TabsTrigger value="runs">
-          <Link href={`/workflow/runs/${workflowId}`}>Runs</Link>
-        </TabsTrigger>
+        <Link href={`/workflow/editor/${workflowId}`}>
+          <TabsTrigger value="editor">Editor</TabsTrigger>
+        </Link>
+        <Link href={`/workflow/runs/${workflowId}`}>
+          <TabsTrigger value="runs">Runs</TabsTrigger>
+        </Link>
       </TabsList>
     </Tabs>
   );
