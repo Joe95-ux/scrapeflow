@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { DatesToDurationString } from "@/lib/helper/dates";
 import { GetPhasesTotalCost } from "@/lib/helper/phases";
-import { ExecutionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
+import {
+  ExecutionPhaseStatus,
+  WorkflowExecutionStatus,
+} from "@/types/workflow";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -67,17 +70,21 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
 
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
 
-  useEffect(()=>{
+  useEffect(() => {
     // while running, we auto-select the current running phase in the sidebar
     const phases = query.data?.phases || [];
-    if(isRunning){
+    if (isRunning) {
       // select the last executed phase
-      const phaseToSelect = phases.toSorted((a,b)=> a.startedAt! > b.startedAt! ? -1 : 1)[0];
+      const phaseToSelect = phases.toSorted((a, b) =>
+        a.startedAt! > b.startedAt! ? -1 : 1
+      )[0];
 
       setSelectedPhase(phaseToSelect.id);
       return;
     }
-    const phaseToSelect = phases.toSorted((a,b)=> a.completedAt! > b.completedAt! ? -1 : 1)[0];
+    const phaseToSelect = phases.toSorted((a, b) =>
+      a.completedAt! > b.completedAt! ? -1 : 1
+    )[0];
 
     setSelectedPhase(phaseToSelect.id);
   }, [isRunning, query.data?.phases]);
@@ -90,7 +97,14 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
           <ExecutionLabel
             icon={CircleDashedIcon}
             label="Status"
-            value={query.data?.status}
+            value={
+              <div className="flex font-semibold capitalize gap-2 items-center">
+                <PhaseStatusBadge
+                  status={query.data?.status as ExecutionPhaseStatus}
+                />
+                <span>{query.data?.status}</span>
+              </div>
+            }
           />
           <ExecutionLabel
             icon={CalendarIcon}
@@ -119,7 +133,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
           <ExecutionLabel
             icon={CoinsIcon}
             label="Credits consumed"
-            value={<ReactCountUpWrapper value={creditsConsumed}/>}
+            value={<ReactCountUpWrapper value={creditsConsumed} />}
           />
         </div>
         <Separator />
@@ -145,7 +159,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                 <Badge variant={"outline"}>{index + 1}</Badge>
                 <p className="font-semibold">{phase.name}</p>
               </div>
-              <PhaseStatusBadge status={phase.status as ExecutionPhaseStatus}/>
+              <PhaseStatusBadge status={phase.status as ExecutionPhaseStatus} />
             </Button>
           ))}
         </div>
@@ -318,7 +332,9 @@ function LogViewer({ logs }: { logs: ExecutionLog[] | undefined }) {
                 >
                   {log.logLevel}
                 </TableCell>
-                <TableCell className="text-sm flex-1 p-[3px] pl-2">{log.message}</TableCell>
+                <TableCell className="text-sm flex-1 p-[3px] pl-2">
+                  {log.message}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

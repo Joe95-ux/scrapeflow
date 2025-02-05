@@ -11,10 +11,10 @@ function NavigationTabs({ workflowId }: { workflowId: string }) {
     <Tabs value={activeTab} className="w-[400px]">
       <TabsList className="grid w-full grid-cols-2">
         <Link href={`/workflow/editor/${workflowId}`}>
-          <TabsTrigger value="editor">Editor</TabsTrigger>
+          <TabsTrigger value="editor" className="w-full">Editor</TabsTrigger>
         </Link>
         <Link href={`/workflow/runs/${workflowId}`}>
-          <TabsTrigger value="runs">Runs</TabsTrigger>
+          <TabsTrigger value="runs" className="w-full">Runs</TabsTrigger>
         </Link>
       </TabsList>
     </Tabs>
