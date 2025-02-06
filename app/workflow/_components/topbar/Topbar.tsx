@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import SaveBtn from "./SaveBtn";
 import ExecuteBtn from "./ExecuteBtn";
+import PublishBtn from "./PublishBtn";
 import NavigationTabs from "./NavigationTabs";
 
 interface Props {
@@ -41,6 +42,7 @@ function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
           <>
             <ExecuteBtn workflowId={workflowId} />
             <SaveBtn workflowId={workflowId} />
+            <PublishBtn workflowId={workflowId}/>
           </>
         )}
       </div>
