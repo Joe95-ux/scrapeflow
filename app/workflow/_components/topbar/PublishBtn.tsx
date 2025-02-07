@@ -1,6 +1,6 @@
 "use client";
 
-import { RunWorkflow } from "@/actions/workflows/runWorkflow";
+import { PublishWorkflow } from "@/actions/workflows/publishWorkflow";
 import useExecutionPlan from "@/components/hooks/useExecutionPlan";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
@@ -13,12 +13,12 @@ function PublishBtn({ workflowId }: { workflowId: string }) {
   const generate = useExecutionPlan();
   const { toObject } = useReactFlow();
   const mutation = useMutation({
-    mutationFn: RunWorkflow,
+    mutationFn: PublishWorkflow,
     onSuccess: () => {
-      toast.success("Execution started", { id: "flow-execution" });
+      toast.success("Workflow published successfully!", { id: workflowId });
     },
     onError: () => {
-      toast.error("Something went wrong", { id: "flow-execution" });
+      toast.error("Something went wrong", { id: workflowId });
     },
   });
 
@@ -34,7 +34,7 @@ function PublishBtn({ workflowId }: { workflowId: string }) {
           return;
         }
         mutation.mutate({
-          workflowId: workflowId,
+          id: workflowId,
           flowDefinition: JSON.stringify(toObject()),
         });
       }}
