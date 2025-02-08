@@ -33,6 +33,7 @@ function PublishBtn({ workflowId }: { workflowId: string }) {
           // Client side validation
           return;
         }
+        toast.loading("Publishing workflow...", {id: workflowId});
         mutation.mutate({
           id: workflowId,
           flowDefinition: JSON.stringify(toObject()),
