@@ -46,30 +46,33 @@ export default function SchedulerDialog(props: {
     mutationFn: UpdateWorkflowCron,
     onSuccess: () => {
       toast.success("Workflow run scheduled successfully", {
-        id: "schedule-workflow-cron",
+        id: "cron",
       });
     },
     onError: () => {
       toast.error("Failed to schedule workflow run", {
-        id: "schedule-workflow-cron",
+        id: "cron",
       });
     },
   });
+  const workflowHasValidCron = props.cron && props.cron.length > 0;
+  const readableSavedCron = workflowHasValidCron && cronstrue.toString(props.cron!);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
           variant={"link"}
           size={"sm"}
-          className={cn("text-sm p-0 h-auto")}
+          className={cn("text-sm p-0 h-auto text-orange-500", workflowHasValidCron && "text-primary" )}
         >
-          {validCron && (
-            <div>
+          {workflowHasValidCron && (
+            <div className="flex items-center gap-2">
               <ClockIcon />
-              {readableCron}
+              {readableSavedCron}
             </div>
           )}
-          {!validCron && (
+          {!workflowHasValidCron && (
             <div className="flex items-center gap-1">
               <TriangleAlertIcon className="h-3 w-3" />
               Set schedule
@@ -112,7 +115,7 @@ export default function SchedulerDialog(props: {
               className="w-full"
               disabled={isPending}
               onClick={() => {
-                toast.loading("saving cron schedule...", { id: cron });
+                toast.loading("saving cron schedule...", { id: "cron" });
                 mutate({ id: props.workflowId, cron });
               }}
             >
