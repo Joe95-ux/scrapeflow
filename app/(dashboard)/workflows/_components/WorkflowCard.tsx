@@ -126,7 +126,7 @@ function WorkflowActions({workflowName, workflowId}: {workflowName: string, work
   );
 }
 
-function ScheduleSection({isDraft, creditsCost, workflowId, cron}: {isDraft: boolean, creditsCost: number, workflowId: string, cron: string}){
+function ScheduleSection({isDraft, creditsCost, workflowId, cron}: {isDraft: boolean, creditsCost: number, workflowId: string, cron: string | null}){
   if(isDraft) return null;
   return (
     <div className="flex items-center gap-2">
