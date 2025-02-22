@@ -73,7 +73,8 @@ export default function SchedulerDialog(props: {
     },
   });
   const workflowHasValidCron = props.cron && props.cron.length > 0;
-  const readableSavedCron = workflowHasValidCron && cronstrue.toString(props.cron!);
+  const readableSavedCron =
+    workflowHasValidCron && cronstrue.toString(props.cron!);
 
   return (
     <Dialog>
@@ -81,7 +82,10 @@ export default function SchedulerDialog(props: {
         <Button
           variant={"link"}
           size={"sm"}
-          className={cn("text-sm p-0 h-auto text-orange-500", workflowHasValidCron && "text-primary" )}
+          className={cn(
+            "text-sm p-0 h-auto text-orange-500",
+            workflowHasValidCron && "text-primary"
+          )}
         >
           {workflowHasValidCron && (
             <div className="flex items-center gap-2">
@@ -122,12 +126,19 @@ export default function SchedulerDialog(props: {
           </div>
           {workflowHasValidCron && (
             <DialogClose asChild>
-              <div className="px-8">
-                <Button className="w-full text-destructive border-destructive hover:text-destructive" variant={"outline"} disabled={isPending || removeScheduleMutation.isPending}>
+              <div className="">
+                <Button
+                  className="w-full text-destructive border-destructive hover:text-destructive"
+                  variant={"outline"}
+                  disabled={isPending || removeScheduleMutation.isPending}
+                  onClick={() => {
+                    toast.loading("Removing schedule...", { id: "cron" });
+                    removeScheduleMutation.mutate(props.workflowId);
+                  }}
+                >
                   Remove current schedule
                 </Button>
               </div>
-
             </DialogClose>
           )}
         </div>
