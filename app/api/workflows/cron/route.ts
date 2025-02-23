@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     triggerWorkflow(workflow.id);
   }
 
-  return new Response(null, { status: 200 });
+  return Response.json({workflowsToRun: workflows.length}, { status: 200 });
 }
 
 function triggerWorkflow(workflowId: string) {
@@ -28,7 +28,6 @@ function triggerWorkflow(workflowId: string) {
   fetch(triggerApiUrl, {
     headers: { Authorization: `Bearer ${process.env.API_SECRET!}` },
     cache: "no-cache",
-    signal: AbortSignal.timeout(5000),
   }).catch((error) => {
     console.error(
       "Error triggering workflow with id",
