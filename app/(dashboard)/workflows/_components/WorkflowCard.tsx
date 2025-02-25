@@ -2,9 +2,10 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { WorkflowStatus } from "@/types/workflow";
+import { WorkflowExecutionStatus, WorkflowStatus } from "@/types/workflow";
 import { Workflow } from "@prisma/client";
 import {
+  ChevronRightIcon,
   CoinsIcon,
   CornerDownRight,
   FileTextIcon,
@@ -29,6 +30,8 @@ import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
 import RunBtn from "./RunBtn";
 import SchedulerDialog from "./SchedulerDialog";
 import { Badge } from "@/components/ui/badge";
+import ExecutionStatusIndicator from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
+import { formatDistanceToNow } from "date-fns";
 
 const WorkflowCard = ({ workflow }: { workflow: Workflow }) => {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
@@ -88,6 +91,7 @@ const WorkflowCard = ({ workflow }: { workflow: Workflow }) => {
           <WorkflowActions workflowName={workflow.name} workflowId={workflow.id}/>
         </div>
       </CardContent>
+      <LastRunDetails workflow={workflow}/>
     </Card>
   );
 };
@@ -142,6 +146,28 @@ function ScheduleSection({isDraft, creditsCost, workflowId, cron}: {isDraft: boo
         </div>
       </TooltipWrapper>
     </div>
+  )
+}
+
+function LastRunDetails({workflow}: {workflow: Workflow}){
+  const {lastRunAt, lastRunStatus, lastRunId} = workflow;
+  const formattedStartedAt = lastRunAt && formatDistanceToNow(lastRunAt, {addSuffix: true});
+
+  return(
+    <div className="bg-primary/5 px-4 py-1 flex justify-between items-center text-muted-foreground">
+      <div className="flex items-center text-sm gap-2">
+        {lastRunAt && (
+          <Link href={`/workflow/runs/${workflow.id}/${lastRunId}`} className="flex items-center text-sm gap-2 group">
+            <span>Last run:</span>
+            <ExecutionStatusIndicator status={lastRunStatus as WorkflowExecutionStatus}/>
+            <span>{lastRunStatus}</span>
+            <span>{formattedStartedAt}</span>
+            <ChevronRightIcon size={14} className="-translate-x-[2px] group-hover:translate-x-0 transition"/>
+          </Link>
+        )}
+      </div>
+    </div>
+
   )
 }
 
