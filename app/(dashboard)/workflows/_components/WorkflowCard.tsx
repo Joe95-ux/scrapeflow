@@ -6,6 +6,7 @@ import { WorkflowExecutionStatus, WorkflowStatus } from "@/types/workflow";
 import { Workflow } from "@prisma/client";
 import {
   ChevronRightIcon,
+  ClockIcon,
   CoinsIcon,
   CornerDownRight,
   FileTextIcon,
@@ -31,7 +32,9 @@ import RunBtn from "./RunBtn";
 import SchedulerDialog from "./SchedulerDialog";
 import { Badge } from "@/components/ui/badge";
 import ExecutionStatusIndicator from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
+import {formatInTimeZone} from "date-fns-tz";
+
 
 const WorkflowCard = ({ workflow }: { workflow: Workflow }) => {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
@@ -150,8 +153,11 @@ function ScheduleSection({isDraft, creditsCost, workflowId, cron}: {isDraft: boo
 }
 
 function LastRunDetails({workflow}: {workflow: Workflow}){
-  const {lastRunAt, lastRunStatus, lastRunId} = workflow;
+  const {lastRunAt, nextRunAt, lastRunStatus, lastRunId} = workflow;
   const formattedStartedAt = lastRunAt && formatDistanceToNow(lastRunAt, {addSuffix: true});
+  const nextSchedule = nextRunAt && format(nextRunAt, "yyyy-MM-dd HH:mm");
+
+  const nextScheduleUTC = nextRunAt && formatInTimeZone(nextRunAt, "UTC", "HH:mm");
 
   return(
     <div className="bg-primary/5 px-4 py-1 flex justify-between items-center text-muted-foreground">
@@ -165,7 +171,14 @@ function LastRunDetails({workflow}: {workflow: Workflow}){
             <ChevronRightIcon size={14} className="-translate-x-[2px] group-hover:translate-x-0 transition"/>
           </Link>
         )}
+        {!lastRunAt && <p>No runs yet</p>}
       </div>
+      {nextRunAt && <div className="flex items-center text-sm gap-2">
+        <ClockIcon/>
+        <span>Next run at:</span>
+        <span>{nextSchedule}</span>
+        <span>{nextScheduleUTC} UTC</span>
+        </div>}
     </div>
 
   )
