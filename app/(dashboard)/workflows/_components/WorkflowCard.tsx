@@ -153,6 +153,11 @@ function ScheduleSection({isDraft, creditsCost, workflowId, cron}: {isDraft: boo
 }
 
 function LastRunDetails({workflow}: {workflow: Workflow}){
+  const isDraft = workflow.status === WorkflowStatus.DRAFT;
+  if(isDraft){
+    return null;
+  };
+
   const {lastRunAt, nextRunAt, lastRunStatus, lastRunId} = workflow;
   const formattedStartedAt = lastRunAt && formatDistanceToNow(lastRunAt, {addSuffix: true});
   const nextSchedule = nextRunAt && format(nextRunAt, "yyyy-MM-dd HH:mm");
@@ -177,7 +182,7 @@ function LastRunDetails({workflow}: {workflow: Workflow}){
         <ClockIcon/>
         <span>Next run at:</span>
         <span>{nextSchedule}</span>
-        <span>{nextScheduleUTC} UTC</span>
+        <span>({nextScheduleUTC} UTC)</span>
         </div>}
     </div>
 
