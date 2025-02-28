@@ -1,3 +1,4 @@
+import { Workflow } from "lucide-react";
 import {z} from "zod";
 
 export const createWorkflowSchema = z.object({
@@ -6,3 +7,9 @@ export const createWorkflowSchema = z.object({
 })
 
 export type createWorkflowSchemaType = z.infer<typeof createWorkflowSchema>
+
+export const duplicateWorkflowSchema = createWorkflowSchema.extend({
+    WorkflowId: z.string(),
+});
+
+export type duplicateWorkflowSchemaType = z.infer<typeof duplicateWorkflowSchema>
