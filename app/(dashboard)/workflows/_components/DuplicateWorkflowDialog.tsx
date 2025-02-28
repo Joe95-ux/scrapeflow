@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Layers2Icon, Loader2 } from "lucide-react";
+import { CopyIcon, Layers2Icon, Loader2 } from "lucide-react";
 import CustomDialogHeader from "@/components/CustomDialogHeader";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,50 +20,68 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { CreateWorkflow } from "@/actions/workflows/createWorkflow";
 import { toast } from "sonner";
-import { duplicateWorkflowSchema, duplicateWorkflowSchemaType } from "@/shema/workflow";
+import {
+  duplicateWorkflowSchema,
+  duplicateWorkflowSchemaType,
+} from "@/shema/workflow";
+import { cn } from "@/lib/utils";
+import { DuplicateWorkflow } from "@/actions/workflows/duplicateWorkflow";
 
-function DuplicateWorkflowDialog({ triggerText }: { triggerText?: string }) {
+function DuplicateWorkflowDialog({ workflowId }: { workflowId?: string }) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<duplicateWorkflowSchemaType>({
     resolver: zodResolver(duplicateWorkflowSchema),
-    defaultValues: {},
+    defaultValues: { workflowId },
   });
 
-  const {mutate, isPending} = useMutation({
-    mutationFn: CreateWorkflow,
-    onSuccess: ()=>{
-      toast.success("Workflow duplicated", {id:"duplicate-workflow"})
+  const { mutate, isPending } = useMutation({
+    mutationFn: DuplicateWorkflow,
+    onSuccess: () => {
+      toast.success("Workflow duplicated", { id: "duplicate-workflow" });
+      setOpen((prev) => !prev);
     },
     onError: () => {
-      toast.error("Failed to duplicate workflow", {id:"duplicate-workflow"})
-    }
-  })
+      toast.error("Failed to duplicate workflow", { id: "duplicate-workflow" });
+    },
+  });
 
-  const onSubmit = useCallback((values: duplicateWorkflowSchemaType)=>{
-    toast.loading("duplicating workflow...", {id:"duplicate-workflow"});
-    mutate(values);
-
-  }, [mutate])
+  const onSubmit = useCallback(
+    (values: duplicateWorkflowSchemaType) => {
+      toast.loading("duplicating workflow...", { id: "duplicate-workflow" });
+      mutate(values);
+    },
+    [mutate]
+  );
 
   return (
-    <Dialog open={open} onOpenChange={open=>{
-      form.reset();
-      setOpen(open);
-    }}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        form.reset();
+        setOpen(open);
+      }}
+    >
       <DialogTrigger asChild>
-        <Button>{"Duplicate Workflow"}</Button>
+        <Button
+          variant={"ghost"}
+          size={"icon"}
+          className={cn(
+            "ml-2 transition-opacity duration-200 opacity-0 group-hover/card:opacity-100"
+          )}
+        >
+          <CopyIcon className="w-4 h-4 text-muted-foreground cursor-pointer" />
+        </Button>
       </DialogTrigger>
       <DialogContent className="px-0">
-        <CustomDialogHeader
-          icon={Layers2Icon}
-          title="Duplicate workflow"
-        />
+        <CustomDialogHeader icon={Layers2Icon} title="Duplicate workflow" />
         <div className="p-6">
           <Form {...form}>
-            <form className="space-y-8 w-full" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              className="space-y-8 w-full"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
               <FormField
                 control={form.control}
                 name="name"
@@ -108,8 +126,8 @@ function DuplicateWorkflowDialog({ triggerText }: { triggerText?: string }) {
               />
               <Button type="submit" className="w-full" disabled={isPending}>
                 {!isPending && "Proceed"}
-                {isPending && <Loader2 className="animate-spin"/>}
-                </Button>
+                {isPending && <Loader2 className="animate-spin" />}
+              </Button>
             </form>
           </Form>
         </div>

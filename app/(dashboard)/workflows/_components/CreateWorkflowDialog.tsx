@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { DuplicateWorkflow } from "@/actions/workflows/duplicateWorkflow";
+import { CreateWorkflow } from "@/actions/workflows/createWorkflow";
 
 function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
   const [open, setOpen] = useState(false);
@@ -33,7 +33,7 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
   });
 
   const {mutate, isPending} = useMutation({
-    mutationFn: DuplicateWorkflow,
+    mutationFn: CreateWorkflow,
     onSuccess: ()=>{
       toast.success("Workflow created", {id:"create-workflow"})
     },

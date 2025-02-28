@@ -12,6 +12,7 @@ import { AppNode } from "@/types/appNode";
 import { Edge } from "@xyflow/react";
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode";
 import { TaskType } from "@/types/task";
+import { revalidatePath } from "next/cache";
 
 export async function DuplicateWorkflow(form: duplicateWorkflowSchemaType) {
   const { success, data } = duplicateWorkflowSchema.safeParse(form);
@@ -25,20 +26,21 @@ export async function DuplicateWorkflow(form: duplicateWorkflowSchemaType) {
     throw new Error("unauthenticated");
   }
 
-  const initialFlow: {nodes: AppNode[]; edges: Edge[]} = {
-    nodes: [],
-    edges: [],
-  }
+  const sourceWorkflow = await prisma.workflow.findUnique({
+    where: {id: data.WorkflowId, userId},
+  })
 
-  // let's add the flow entry point
-  initialFlow.nodes.push(CreateFlowNode(TaskType.LAUNCH_BROWSER));
+  if(!sourceWorkflow){
+    throw new Error("Workflow not found");
+  }
 
   const result = await prisma.workflow.create({
     data: {
       userId,
+      name: data.name,
+      description: data.description,
       status: WorkflowStatus.DRAFT,
-      definition: JSON.stringify(initialFlow),
-      ...data,
+      definition: sourceWorkflow.definition,
     },
   });
 
@@ -46,5 +48,5 @@ export async function DuplicateWorkflow(form: duplicateWorkflowSchemaType) {
     throw new Error("failed to create workflow");
   }
 
-  redirect(`/workflow/editor/${result.id}`);
+ revalidatePath("/workflows");
 }
