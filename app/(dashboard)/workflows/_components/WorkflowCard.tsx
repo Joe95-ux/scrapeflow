@@ -175,13 +175,13 @@ function LastRunDetails({workflow}: {workflow: Workflow}){
             <ExecutionStatusIndicator status={lastRunStatus as WorkflowExecutionStatus}/>
             <ExecutionStatusLabel status={lastRunStatus as WorkflowExecutionStatus}/>
             <span>{formattedStartedAt}</span>
-            <ChevronRightIcon size={14} className="-translate-x-[2px] group-hover:translate-x-0 transition"/>
+            <ChevronRightIcon size={16} className="-translate-x-[2px] group-hover:translate-x-0 transition mt-1"/>
           </Link>
         )}
         {!lastRunAt && <p>No runs yet</p>}
       </div>
       {nextRunAt && <div className="flex items-center text-sm gap-2">
-        <ClockIcon/>
+        <ClockIcon size={16}/>
         <span>Next run at:</span>
         <span>{nextSchedule}</span>
         <span>({nextScheduleUTC} UTC)</span>

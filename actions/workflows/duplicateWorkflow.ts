@@ -27,7 +27,7 @@ export async function DuplicateWorkflow(form: duplicateWorkflowSchemaType) {
   }
 
   const sourceWorkflow = await prisma.workflow.findUnique({
-    where: {id: data.WorkflowId, userId},
+    where: {id: data.workflowId, userId},
   })
 
   if(!sourceWorkflow){
