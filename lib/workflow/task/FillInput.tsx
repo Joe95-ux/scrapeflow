@@ -5,23 +5,29 @@ import { Edit3Icon, LucideProps } from "lucide-react";
 export const FillInputTask = {
   type: TaskType.FILL_INPUT,
   label: "Fill input",
-  icon: (props: LucideProps) => (
+  icon: (props) => (
     <Edit3Icon className="stroke-rose-400" {...props} />
   ),
   isEntryPoint: false,
-  credits: 2,
+  credits: 1,
   inputs: [
     {
       name: "Web page",
       type: TaskParamType.BROWSER_INSTANCE,
       required: true,
     },
+    {
+      name: "Selector",
+      type: TaskParamType.STRING,
+      required: true,
+    },
+    {
+      name: "Value",
+      type: TaskParamType.STRING,
+      required: true,
+    },
   ] as const,
   outputs: [
-    {
-      name: "Html",
-      type: TaskParamType.STRING,
-    } as const,
     {
       name: "Web page",
       type: TaskParamType.BROWSER_INSTANCE,
