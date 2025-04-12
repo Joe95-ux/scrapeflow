@@ -1,9 +1,10 @@
-import { TaskType } from "@/types/task.js";
-import { ExtractTextFromElementTask } from "./ExtractTextFromElement.tsx";
+import { TaskType } from "@/types/task";
+import { ExtractTextFromElementTask } from "@/lib/workflow/task/ExtractTextFromElement.tsx";
 import { LaunchBrowserTask } from "./LaunchBrowser";
 import { PageToHtmlTask } from "./PageToHtml";
-import { WorkflowTask } from "@/types/workflow.js";
-import { FillInputTask } from "./FillInput.jsx";
+import { WorkflowTask } from "@/types/workflow";
+import { FillInputTask } from "@/lib/workflow/task/FillInput";
+
 
 type Registry = {
     [K in TaskType]: WorkflowTask & {type: K};
